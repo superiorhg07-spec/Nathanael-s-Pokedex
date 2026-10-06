@@ -1,0 +1,9 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { getPokemonList } from '../api/pokeApi.js'
+import PokemonCard from '../components/PokemonCard.jsx'
+import LoadingGrid from '../components/LoadingGrid.jsx'
+import { useFavorites } from '../hooks/useFavorites.js'
+
+function FavoritesPage() { const [catalog,setCatalog]=useState([]); const [isLoading,setIsLoading]=useState(true); const [error,setError]=useState(''); const {favorites,isFavorite,toggleFavorite}=useFavorites(); useEffect(()=>{const c=new AbortController(); getPokemonList(c.signal).then(setCatalog).catch(err=>{if(err.name!=='AbortError')setError(err.message)}).finally(()=>{if(!c.signal.aborted)setIsLoading(false)});return()=>c.abort()},[]); const saved=useMemo(()=>catalog.filter((p)=>favorites.includes(p.name)),[catalog,favorites]); return <section className="favorites-page"><div className="section-heading page-section-heading"><div><p className="section-kicker">Your collection</p><h1>Favorites</h1></div><span>{favorites.length} saved</span></div><p className="page-lede">Keep a shortlist of Pokémon worth revisiting. Favorites stay on this device.</p>{isLoading&&<LoadingGrid count={6}/>} {!isLoading&&error&&<div className="state-card error-state"><strong>Could not load favorites.</strong><span>{error}</span></div>} {!isLoading&&!error&&!saved.length&&<div className="empty-favorites"><div className="empty-mark">♡</div><h2>Your collection is empty.</h2><p>Save a Pokémon from Discover or its profile.</p><Link to="/" className="primary-button">Explore Pokémon</Link></div>} {!isLoading&&!error&&saved.length>0&&<div className="pokemon-grid">{saved.map((pokemon)=><PokemonCard key={pokemon.name} pokemon={pokemon} favorite={isFavorite(pokemon.name)} onToggleFavorite={toggleFavorite}/>)}</div>}</section> }
+export default FavoritesPage

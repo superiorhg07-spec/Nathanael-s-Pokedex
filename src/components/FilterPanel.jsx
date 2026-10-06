@@ -1,0 +1,7 @@
+import { GENERATIONS, TYPE_ORDER } from '../config.js'
+import TypeBadge from './TypeBadge.jsx'
+
+function FilterPanel({ generation, type, sort, pageSize, onChange }) {
+  return <div className="filter-panel"><div><span className="filter-label">Generation</span><select value={generation} onChange={(e) => onChange({ generation: e.target.value })}><option value="all">All generations</option>{GENERATIONS.map((item) => <option key={item.id} value={item.id}>{item.label} · {item.range}</option>)}</select></div><div><span className="filter-label">Type</span><select value={type} onChange={(e) => onChange({ type: e.target.value })}><option value="all">All types</option>{TYPE_ORDER.map((item) => <option key={item} value={item}>{item}</option>)}</select></div><div><span className="filter-label">Sort</span><select value={sort} onChange={(e) => onChange({ sort: e.target.value })}><option value="id">Pokédex number</option><option value="name">Name A–Z</option></select></div><div><span className="filter-label">Cards</span><select value={pageSize} onChange={(e) => onChange({ pageSize: Number(e.target.value) })}><option value="12">12</option><option value="24">24</option><option value="48">48</option></select></div><div className="filter-reset"><button type="button" onClick={() => onChange({ generation: 'all', type: 'all', sort: 'id', pageSize: 24 })}>Reset filters</button></div></div>
+}
+export default FilterPanel
